@@ -38,11 +38,7 @@ from employees emp, departments dept
 where emp.department_id = dept.department_id;
 
 -- 2. 부서번호 80에 속하는 모든 업무의 고유 목록을 작성하고 출력결과에 부서의 위치를 출력하시오.
-select joh.job_id, dept.location_id
-from locations loc, job_history joh, departments dept
-where loc.location_id = dept.location_id and joh.department_id = dept.department_id and dept.department_id = 80;
-
-select distinct job_title, concat(country_id, ' ', street_address) 위치
+select distinct job_title, concat(country_id, ' ', city, ' ', street_address) 위치
 from departments,
      employees,
      jobs,
@@ -85,12 +81,16 @@ from employees emp
 where emp.manager_id is null
 order by emp.employee_id;
 
--- 8. 지정한 사원의 이름, 부서 번호 와 지정한 사원과 동일한 부서에서 근무하는 모든 사원을 조회하세요(Marvins로 지정)
+-- 8. 지정한 사원의 이름, 부서 번호 와 지정한 사원과 동일한 부서에서 근무하는 모든 사원을 조회하세요(employee_id = '101' 지정)
 select concat(emp1.first_name, ' ', emp1.last_name) '지정한 사원의 이름', emp1.department_id '지정한 사원의 부서 번호', emp2.*
 from employees emp1, employees emp2, departments
 where emp1.employee_id = '101' and emp1.department_id = emp2.department_id;
 
+select concat(e1.first_name,' ', e1.last_name) '같은 부서인 사람', e1.department_id 부서번호
+from employees e1 inner join employees e2 on e1.department_id = e2.department_id and e2.employee_id = '202';
+
 -- 9. JOB_GRADRES 테이블을 생성하고 모든 사원의 이름, 업무,부서이름, 급여 , 급여등급을 조회하세요
 select concat(first_name, ' ', last_name) 이름, job_title 업무, department_name 부서이름, salary 급여, grade_level 급여등급
 from departments, jobs, employees left outer join job_grades on salary BETWEEN lowest_sal and highest_sal
-where employees.department_id = departments.department_id and jobs.job_id = employees.job_id;
+where employees.department_id = departments.department_id and jobs.job_id = employees.job_id
+order by grade_level;;

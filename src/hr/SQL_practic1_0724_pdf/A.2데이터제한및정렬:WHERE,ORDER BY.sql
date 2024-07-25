@@ -15,6 +15,9 @@ where emp.last_name like '%a%' or '%o%';
 
 -- [문제 2] 현재 날짜 타입을 날짜 함수를 통해 확인하고, 2006년 05월 20일부터 2007년 05월 20일 사이에
 -- 고용된 사원들의 성과 이름(Name으로 별칭), 사원번호, 고용일자를 출력하시오. 단, 입사일이 빠른 순으로 정렬하시오
+select now();
+select current_date();
+
 select concat(emp.first_name, emp.last_name) Name, emp.employee_id, emp.hire_date
 from employees emp
 where hire_date between str_to_date('2006-05-20', '%Y-%m-%d') and str_to_date('2007-05-20', '%Y-%m-%d')
@@ -26,4 +29,4 @@ order by hire_date;
 select concat(emp.first_name, emp.last_name) Name, emp.salary, emp.job_id, emp.commission_pct
 from employees emp
 where emp.commission_pct is not null
-order by emp.commission_pct desc;
+order by salary desc, emp.commission_pct desc;

@@ -11,20 +11,23 @@ where emp.department_id = 60;
 -- 출력 시 성과 이름은 첫 글자가 대문자, 업무는 모두 대문자로 출력하고 머리글은 Employee JOBs로 표시하시오(18행).
 -- 예) James Landry is a ST_CLERK
 -- (hint) INITCAP, UPPER, SUBSTR 함수를 사용하며 SUBSTR 함수의 경우 뒤에서부터 첫글자는 두 번째 인자에 –1을 사용한다.
-select
-from
-where;
+select concat(first_name, ' ', last_name, 'is a ', UPPER(job_id)) 'Employee JOBs'
+from employees;
 
 -- [문제 2] 모든 사원의 연봉을 표시하는 보고서를 작성하려고 한다. 보고서에 사원의 성과 이름(Name으로 별칭), 급여, 수당여부에 따른 연봉을 포함하여 출력하시오.
 -- 수당여부는 수당이 있으면 “Salary + Commission”, 수당이 없으면 “Salary only”라고 표시하고, 별칭은 적절히 붙인다.
 -- 또한 출력 시 연봉이 높은 순으로 정렬한다(107행).
-select concat(emp.first_name, emp.last_name) Name, emp.salary, emp.salary * (1 + emp.commission_pct)
-from employees emp
-where emp.commission_pct is not null
-order by emp.salary * (1 + emp.commission_pct) desc;
+select concat(first_name, last_name) Name, salary,
+case
+when commission_pct is not null then 'Salary + Commission'
+else 'Salary only'
+end as SalarywithCommission, salary * ( 1 + ifnull(commission_pct, 0)) * 12 'Annual Salary'
+from employees
+order by 'Annual Salary' desc;
+
 
 -- [문제 3] 모든 사원들 성과 이름(Name으로 별칭), 입사일 그리고 입사일이 어떤 요일이였는지 출력하시오.
 -- 이때 주(week)의 시작인 일요일부터 출력되도록 정렬하시오(107행).
-select
-from
-order by
+select concat(first_name, ' ', last_name) Name, hire_date, dayname(hire_date)
+from employees
+order by dayofweek(hire_date);
