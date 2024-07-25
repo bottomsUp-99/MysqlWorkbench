@@ -42,20 +42,37 @@ select joh.job_id, dept.location_id
 from locations loc, job_history joh, departments dept
 where loc.location_id = dept.location_id and joh.department_id = dept.department_id and dept.department_id = 80;
 
+select distinct job_title, concat(country_id, ' ', street_address) 위치
+from departments,
+     employees,
+     jobs,
+     locations
+where departments.department_id = 80
+  and employees.department_id = departments.department_id
+  and jobs.job_id = employees.job_id
+  and locations.location_id = departments.location_id;
+
 -- 3. 커미션을 받는 사원의 이름, 부서 이름, 위치 번호와 도시 명을 조회하세요.
 select concat(emp.first_name, emp.last_name), dept.department_name, loc.location_id, loc.city
 from locations loc, employees emp, departments dept
 where loc.location_id = dept.location_id and emp.department_id = dept.department_id and emp.commission_pct is not null;
 
 -- 4. 이름에 a(소문자)가 포함된 모든 사원의 이름과 부서명을 조회하세요.
-select concat(emp.first_name, emp.last_name), dept.department_name
-from employees emp, departments dept
-where emp.department_id = dept.department_id;
+select concat(first_name, ' ', last_name) 이름, department_name 부서명
+from employees,
+     departments
+where (first_name like '%a%' or last_name like '%a%') and employees.department_id = departments.department_id;
 
 -- 5. 'Toronto'에서 근무하는 모든 사원의 이름, 업무, 부서번호와 부서명을 조회하세요
-select concat(emp.first_name, emp.last_name), emp.job_id, dept.department_id, dept.department_name
-from locations loc, employees emp, departments dept
-where dept.department_id = emp.department_id and dept.location_id = loc.location_id and loc.city = 'Toronto';
+select concat(first_name, ' ', last_name) 이름, job_title 업무, employees.department_id 부서번호, department_name 부서명
+from locations,
+     employees,
+     departments,
+     jobs
+where city = 'Toronto'
+  and employees.department_id = departments.department_id
+  and jobs.job_id = employees.job_id
+  and locations.location_id = departments.location_id;
 
 -- 6. 사원의 이름과 사원번호를 관리자의 이름과 관리자의 아이디와 함께 표시하고 각각의 컬럼명을 Employee, Emp#, Manager, Mgr#으로 지정하세요.
 select concat(e1.first_name, e1.last_name) Employee, e1.employee_id "Emp#", concat(e2.first_name, e2.last_name) Manager, e2.employee_id "Mgr#"
@@ -63,17 +80,17 @@ from employees e1, employees e2
 where e1.manager_id = e2.employee_id;
 
 -- 7. 사장인'King'을 포함하여 관리자가 없는 모든 사원을 조회하세요 (사원번호를 기준으로 정렬하세요)
-select distinct e1.employee_id, concat(e1.first_name, e1.first_name)
-from employees e1, employees e2
-where e1.employee_id = e2.manager_id and e1.manager_id is null or e1.last_name = 'King'
-order by e1.employee_id;
+select emp.*
+from employees emp
+where emp.manager_id is null
+order by emp.employee_id;
 
 -- 8. 지정한 사원의 이름, 부서 번호 와 지정한 사원과 동일한 부서에서 근무하는 모든 사원을 조회하세요(Marvins로 지정)
-select concat(emp.first_name, emp.last_name), emp.employee_id
-from employees emp, departments dept
-where emp.department_id = dept.department_id and emp.department_id = (select department_id from employees where employees.last_name = 'Marvins');
+select concat(emp1.first_name, ' ', emp1.last_name) '지정한 사원의 이름', emp1.department_id '지정한 사원의 부서 번호', emp2.*
+from employees emp1, employees emp2, departments
+where emp1.employee_id = '101' and emp1.department_id = emp2.department_id;
 
 -- 9. JOB_GRADRES 테이블을 생성하고 모든 사원의 이름, 업무,부서이름, 급여 , 급여등급을 조회하세요
-select
-from
-where
+select concat(first_name, ' ', last_name) 이름, job_title 업무, department_name 부서이름, salary 급여, grade_level 급여등급
+from departments, jobs, employees left outer join job_grades on salary BETWEEN lowest_sal and highest_sal
+where employees.department_id = departments.department_id and jobs.job_id = employees.job_id;
